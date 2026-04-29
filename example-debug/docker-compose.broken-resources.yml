@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  api:
+    image: swarm-lab-api:1.0.0
+    networks:
+      - backend
+    deploy:
+      replicas: 3
+    user: "1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+
+  web:
+    image: swarm-lab-viewer:1.0.0
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+
+networks:
+  backend:
+    driver: overlay
