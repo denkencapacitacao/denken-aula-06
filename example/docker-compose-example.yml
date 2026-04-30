@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+
+  api:
+    image: swarm-lab-api:1.0.0
+    networks:
+      - backend
+    ports:
+      - "5000:5000"
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+    user: "1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    networks:
+      - backend
+    depends_on:
+      - api
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 64M
+
+networks:
+  backend:
+    driver: overlay
